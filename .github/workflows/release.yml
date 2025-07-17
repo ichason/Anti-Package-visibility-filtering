@@ -26,11 +26,20 @@ jobs:
     - name: Build APK
       run: ./gradlew assembleRelease
       
+    - name: Check if APK exists
+      run: |
+        if [ ! -f "app/build/outputs/apk/release/app-release.apk" ]; then
+          echo "APK file not found!"
+          exit 1
+        fi
+        echo "APK file found successfully"
+        
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-release
         path: app/build/outputs/apk/release/app-release.apk
+        retention-days: 1
         
   release:
     needs: build
@@ -47,6 +56,14 @@ jobs:
         name: app-release
         path: ./
         
+    - name: Verify APK file
+      run: |
+        if [ ! -f "app-release.apk" ]; then
+          echo "Downloaded APK file not found!"
+          exit 1
+        fi
+        echo "APK file verified: $(ls -la app-release.apk)"
+        
     - name: Get version from build.gradle.kts
       id: version
       run: |
@@ -60,15 +77,15 @@ jobs:
         tag_name: v${{ steps.version.outputs.version }}-${{ github.run_number }}
         name: Release v${{ steps.version.outputs.version }}-${{ github.run_number }}
         body: |
-          ## 自动构建发布
+          ## Auto Build Release
           
-          - 版本: ${{ steps.version.outputs.version }}
-          - 构建号: ${{ github.run_number }}
-          - 提交: ${{ github.sha }}
-          - 时间: ${{ github.event.head_commit.timestamp }}
+          - Version: ${{ steps.version.outputs.version }}
+          - Build Number: ${{ github.run_number }}
+          - Commit: ${{ github.sha }}
+          - Time: ${{ github.event.head_commit.timestamp }}
           
-          ### 下载
-          点击上方文件下载APK安装包
+          ### Download
+          Click the file above to download APK
         draft: false
         prerelease: false
       env:
