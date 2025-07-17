@@ -23,12 +23,12 @@ fun getGitCommitHash(): String {
 
 android {
     namespace = "com.chason.anti_package_visibility_filtering"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.chason.anti_package_visibility_filtering"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = getGitCommitCount().toInt()
         versionName = "1.0.${getGitCommitCount()}-${getGitCommitHash()}"
 

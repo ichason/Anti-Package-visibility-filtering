@@ -67,7 +67,3 @@ This tool is for learning and research purposes only. Please do not use it for i
 ---
 
 **Detailed Technical Documentation**: [Android 11 Package Visibility Bypass Technical Details](https://blog.csdn.net/a_Chaon/article/details/124746530?spm=1001.2014.3001.5501)
-
-## 自动发布测试
-
-这个项目现在配置了自动发布功能，每次提交到main分支都会自动构建APK并发布到GitHub Releases。
