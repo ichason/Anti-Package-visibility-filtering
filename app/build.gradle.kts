@@ -2,25 +2,6 @@ plugins {
     id("com.android.application")
 }
 
-// 获取Git提交信息用于版本号
-fun getGitCommitCount(): String {
-    return try {
-        val process = Runtime.getRuntime().exec("git rev-list --count HEAD")
-        process.inputStream.bufferedReader().readText().trim()
-    } catch (e: Exception) {
-        "1"
-    }
-}
-
-fun getGitCommitHash(): String {
-    return try {
-        val process = Runtime.getRuntime().exec("git rev-parse --short HEAD")
-        process.inputStream.bufferedReader().readText().trim()
-    } catch (e: Exception) {
-        "unknown"
-    }
-}
-
 android {
     namespace = "com.chason.anti_package_visibility_filtering"
     compileSdk = 34
@@ -29,8 +10,8 @@ android {
         applicationId = "com.chason.anti_package_visibility_filtering"
         minSdk = 24
         targetSdk = 34
-        versionCode = getGitCommitCount().toInt()
-        versionName = "1.0.${getGitCommitCount()}-${getGitCommitHash()}"
+        versionCode = 1
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
