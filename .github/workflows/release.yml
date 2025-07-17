@@ -1,0 +1,75 @@
+name: Build and Release APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    - name: Build APK
+      run: ./gradlew assembleRelease
+      
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release
+        path: app/build/outputs/apk/release/app-release.apk
+        
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download APK artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: app-release
+        path: ./
+        
+    - name: Get version from build.gradle.kts
+      id: version
+      run: |
+        VERSION=$(grep -o 'versionName = "[^"]*"' app/build.gradle.kts | cut -d'"' -f2)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: app-release.apk
+        tag_name: v${{ steps.version.outputs.version }}-${{ github.run_number }}
+        name: Release v${{ steps.version.outputs.version }}-${{ github.run_number }}
+        body: |
+          ## 自动构建发布
+          
+          - 版本: ${{ steps.version.outputs.version }}
+          - 构建号: ${{ github.run_number }}
+          - 提交: ${{ github.sha }}
+          - 时间: ${{ github.event.head_commit.timestamp }}
+          
+          ### 下载
+          点击上方文件下载APK安装包
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
