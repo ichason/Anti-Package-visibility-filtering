@@ -66,4 +66,3 @@ This tool is for learning and research purposes only. Please do not use it for i
 
 ---
 
-**Detailed Technical Documentation**: [Android 11 Package Visibility Bypass Technical Details](https://blog.csdn.net/a_Chaon/article/details/124746530?spm=1001.2014.3001.5501)
